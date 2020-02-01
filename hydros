@@ -1,0 +1,57 @@
+#include <Arduino.h>
+#include <Stepper.h>
+
+/* D8 czerwony
+   D7 zielony
+   D6 pomaranczowy
+   D2 szary
+   D3 niebieski
+   D4 zolty
+   JP6 bialy- plus silnikow
+   JP7 niebieski- minus silnikow
+   D12 zolty
+   JP4 czerwony
+   5,5V szary
+   Gnd arduino niebieski
+   JP5 zielony- gnd arduino
+   A5 zielony
+ */
+#define steps 200   //steps per revolution
+
+unsigned long time1=0;
+unsigned long time2=0;
+
+int revolution=80;
+int speedmotor=20;
+
+Stepper rights(steps,2,3);
+Stepper lefts(steps,6,7);
+
+void setup()
+{
+    Serial.begin(9600);
+    rights.setSpeed(speedmotor);  //rpm
+    lefts.setSpeed(speedmotor);
+   // pinMode(5,INPUT_PULLUP); //zasilanie arduino
+    pinMode(12,INPUT_PULLUP); // zasilanie silnikow
+    rights.step(revolution); //revolution 
+    lefts.step(revolution);
+}
+void loop()
+{
+    time1= millis();
+  //while(digitalRead(5)==LOW){
+   while(digitalRead(12)==LOW){
+      if(time1-time2 >=2000)
+      {
+       time2=time1;
+        rights.step(revolution); //revolution 
+        lefts.step(revolution);
+        revolution=-revolution;
+        
+    }
+    time1= millis();
+   }
+ // }
+
+}
